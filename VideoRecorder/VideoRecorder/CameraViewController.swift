@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import AVFoundation
 
 class CameraViewController: UIViewController {
 
+    lazy private var captureSession = AVCaptureSession()
     @IBOutlet var recordButton: UIButton!
     @IBOutlet var cameraView: CameraPreviewView!
 
@@ -19,9 +21,53 @@ class CameraViewController: UIViewController {
 
 		// Resize camera preview to fill the entire screen
 		cameraView.videoPlayerView.videoGravity = .resizeAspectFill
+        
+        setUpCaptureSession()
+        
 	}
 
-
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    private func setUpCaptureSession() {
+        captureSession.beginConfiguration()
+        
+        //add inputs
+        let camera = bestCamera()
+        // video
+        guard let captureInput = try? AVCaptureDeviceInput(device: camera),
+            captureSession.canAddInput(captureInput) else {
+                fatalError("Can't create  the input from the camera")
+        }
+        captureSession.addInput(captureInput)
+        
+        if captureSession.canSetSessionPreset(.hd1920x1080) {
+            captureSession.sessionPreset = .hd1920x1080
+        }
+        // Audio
+        
+        //Live preview
+        cameraView.session = captureSession
+        //Recording to disk
+        captureSession.commitConfiguration()
+    
+    }
+    private func bestCamera() -> AVCaptureDevice {
+        // all iphones have a wide angle (front and back)
+        if let ultraWideCamera = AVCaptureDevice.default(.builtInUltraWideCamera, for: .video, position: .back) {
+            return ultraWideCamera
+        }
+        if let wideCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
+            return wideCamera
+        }
+        
+        fatalError("No cameras on the device")
+    }
     @IBAction func recordButtonPressed(_ sender: Any) {
 
 	}
