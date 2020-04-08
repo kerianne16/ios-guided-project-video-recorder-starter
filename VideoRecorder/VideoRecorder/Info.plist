@@ -60,5 +60,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSFileProviderDomainUsageDescription</key>
+	<string>${PRODUCT_NAME} needs access to your camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>${PRODUCT_NAME} needs access to you microphone</string>
 </dict>
 </plist>
